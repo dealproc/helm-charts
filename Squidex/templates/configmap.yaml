@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  URLS__BASEURL: {{ .Values.Urls.Squidex }}
+  URLS__ENFORCEHTTPS: "false"
+  EVENTSTORE__CONSUME: "true"
+  EVENTSTORE__MONGODB__CONFIGURATION: {{ .Values.MongoDB.ConnectionString }}
+  STORE__MONGODB__CONFIGURATION: {{ .Values.MongoDB.ConnectionString }}
+  IDENTITY__ADMINEMAIL: {{ .Values.Admin.email }}
+  IDENTITY__ADMINPASSWORD: {{ .Values.Admin.password }}
+  IDENTITY__GOOGLECLIENT: 
+  IDENTITY__GOOGLESECRET: 
+  IDENTITY__MICROSOFTCLIENT: 
+  IDENTITY__MICROSOFTSECRET: 
+  LETSENCRYPT_HOST: {{ .Values.Domains.Squidex }}
+  LETSENCRYPT_EMAIL: "richard@adaptpos.com"
+  SQUIDEX_VIRTUAL_HOST: {{ .Values.Domains.Squidex }}

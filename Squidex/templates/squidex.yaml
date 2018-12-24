@@ -1,0 +1,133 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+  creationTimestamp: null
+  labels:
+    serviceName: squidex
+  name: squidex
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        serviceName: squidex
+    spec:
+      containers:
+      - env:
+        - name: URLS__BASEURL
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: URLS__BASEURL
+        - name: URLS__ENFORCEHTTPS
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: URLS__ENFORCEHTTPS
+        - name: EVENTSTORE__CONSUME
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: EVENTSTORE__CONSUME
+        - name: EVENTSTORE__MONGODB__CONFIGURATION
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: EVENTSTORE__MONGODB__CONFIGURATION
+        - name: STORE__MONGODB__CONFIGURATION
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: STORE__MONGODB__CONFIGURATION
+        - name: IDENTITY__ADMINEMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: IDENTITY__ADMINEMAIL
+        - name: IDENTITY__ADMINPASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: IDENTITY__ADMINPASSWORD
+        - name: IDENTITY__GOOGLECLIENT
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: IDENTITY__GOOGLECLIENT
+        - name: IDENTITY__GOOGLESECRET
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: IDENTITY__GOOGLESECRET
+        - name: IDENTITY__MICROSOFTCLIENT
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: IDENTITY__MICROSOFTCLIENT
+        - name: IDENTITY__MICROSOFTSECRET
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: IDENTITY__MICROSOFTSECRET
+        - name: LETSENCRYPT_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: LETSENCRYPT_HOST
+        - name: LETSENCRYPT_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: LETSENCRYPT_EMAIL
+        - name: VIRTUAL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: SQUIDEX_VIRTUAL_HOST
+        image: squidex/squidex:latest
+        name: squidex
+        ports:
+        - containerPort: 80
+        - containerPort: 33333
+        - containerPort: 40000
+        resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  creationTimestamp: null
+  labels:
+    serviceName: squidex
+  name: squidex
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: "80"
+    port: 80
+    targetPort: 80
+  selector:
+    serviceName: squidex
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: squidex
+  namespace: {{ .Release.Namespace }}
+  annotations:
+spec:
+  rules:
+  - host: {{ .Values.Domains.Squidex }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: squidex
+          servicePort: 80

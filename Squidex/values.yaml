@@ -1,0 +1,10 @@
+Urls:
+  enforceHttps: ["true" / "false"]
+  Squidex: [Url to access Squidex]
+Domains:
+  Squidex: [Hostname to access Squidex]
+MongoDB:
+  ConnectionString: [MongoDB Connection String]
+Admin:
+  email: [Initial User's Email]
+  password: [Initial Password for User]
